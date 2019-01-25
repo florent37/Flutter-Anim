@@ -30,6 +30,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
           /* rebuild */
         });
       },
+      /* Define initial values, used when the animation has not been launched */
       initiaValues: {
         "text.alpha": 0,
         "text.translationY": -20,
@@ -99,6 +100,36 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  Widget buildAvatarName() {
+    return Transform.translate(
+      offset: Offset(0, anim1["text.translationY"]),
+      child: Opacity(
+        opacity: anim1["text.alpha"],
+        child: Text(
+          "Avatar",
+          style: const TextStyle(
+              color: Colors.blueGrey,
+              fontSize: 18,
+              fontWeight: FontWeight.w700),
+        ),
+      ),
+    );
+  }
+
+  Widget buildAvatar() {
+    return Transform.scale(
+      scale: anim1["round.scale"],
+      child: Transform.rotate(
+        angle: anim1["round.rotation"],
+        child: SizedBox(
+          height: anim1["round.size"],
+          width: anim1["round.size"],
+          child: CircleAvatar(),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -117,37 +148,8 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Transform.scale(
-                        scale: anim1["round.scale"],
-                        child: Transform.rotate(
-                          angle: anim1["round.rotation"],
-                          child: SizedBox(
-                            height: anim1["round.size"],
-                            width: anim1["round.size"],
-                            child: Material(
-                              elevation: 4.0,
-                              shape: CircleBorder(),
-                              clipBehavior: Clip.hardEdge,
-                              child: Image.asset(
-                                "assets/avatar.jpg",
-                                fit: BoxFit.cover,
-                                height: double.infinity,
-                                width: double.infinity,
-                              ),
-                            ),
-                          ),
-                        )),
-                    Transform.translate(
-                      offset: Offset(0, anim1["text.translationY"]),
-                      child: Opacity(
-                        opacity: anim1["text.alpha"],
-                        child: Text("Avatar",
-                            style: const TextStyle(
-                                color: Colors.blueGrey,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700)),
-                      ),
-                    )
+                    buildAvatar(),
+                    buildAvatarName(),
                   ],
                 ),
               ),
@@ -169,6 +171,27 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class CircleAvatar extends StatelessWidget {
+  const CircleAvatar({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      elevation: 4.0,
+      shape: CircleBorder(),
+      clipBehavior: Clip.hardEdge,
+      child: Image.asset(
+        "assets/avatar.jpg",
+        fit: BoxFit.cover,
+        height: double.infinity,
+        width: double.infinity,
       ),
     );
   }
