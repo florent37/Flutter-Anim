@@ -1,15 +1,19 @@
 import 'dart:async';
+export 'dart:async';
 
 import 'package:anim/animatable.dart';
-import 'package:anim/animation.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:meta/meta.dart';
-
 export 'package:anim/animatable.dart';
+
+import 'package:anim/animation.dart';
 export 'package:anim/animation.dart';
 
-export 'package:flutter/animation.dart';
+import 'package:flutter/scheduler.dart';
 export 'package:flutter/scheduler.dart';
+
+import 'package:meta/meta.dart';
+export 'package:meta/meta.dart';
+
+export 'package:flutter/animation.dart';
 
 typedef AnimListener = void Function();
 
