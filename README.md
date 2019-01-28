@@ -4,7 +4,7 @@ Fluent Flutter Animation library. Describe Sequences & Parallel animation's work
 
 # Describe the Anim
 
-Anim contains 3 major classes : `AnimValues`, `AnimSequentially` and `AnimTogether`
+Anim contains 3 major classes : `AnimValues`, `AnimSequentially` and `AnimTogether`.
 
 ## Animation
 ```Dart
@@ -31,38 +31,57 @@ AnimTogether(anims: [
 
 # Example
 
+[![sample1](https://raw.githubusercontent.com/florent37/Flutter-Anim/master/example/medias/sample1.gif)](https://github.com/florent37/Flutter-Anim)
+
 ```Dart
 this.anim = Anim(
-      vsync: this,
-      listener: () {
-        setState(() {
-          /* rebuild */
-        });
-      },
-      /* Define initial values, used when the animation has not been launched */
-      initiaValues: {
-          "alpha": 0,
-          "height": 0,
-      },
-      animations: [
+        vsync: this,
+        listener: () {
+          setState(() {
+            /* rebuild */
+          });
+        },
+        /* Define initial values, used when the animation has not been launched */
+        initiaValues: {
+          "alpha": 1,
+          "size": 100,
+        },
+        animations: [
           AnimSequentially(
               startDelay: const Duration(milliseconds: 400),
               anims: [
+
+                //Animate the alpha, then the size
                 AnimValues(
+                  name: "alpha",
+                  curve: Curves.easeIn,
+                  duration: const Duration(milliseconds: 800),
+                  values: [1, 0.4, 0.8, 0.5],
+                ),
+                AnimValues(
+                  name: "size",
+                  curve: Curves.easeIn,
+                  duration: const Duration(milliseconds: 800),
+                  values: [100, 140, 80],
+                ),
+
+                //and finally animate those two values together
+                AnimTogether(anims: [
+                  AnimValues(
                     name: "alpha",
                     curve: Curves.easeIn,
                     duration: const Duration(milliseconds: 800),
-                    values: [0, 0.8, 0.5, 1],
-                ),
-                AnimValues(
-                    name: "height",
+                    values: [0.5, 1],
+                  ),
+                  AnimValues(
+                    name: "size",
                     curve: Curves.easeIn,
                     duration: const Duration(milliseconds: 800),
-                    values: [0, 140, 100],
-                ),
-          ]),
-      ]
-    );
+                    values: [80, 100],
+                  ),
+                ])
+              ]),
+        ]);
 ```
 
 # Bind your Anim
@@ -73,8 +92,9 @@ Widget build(BuildContext context) {
   return Opacity(
       opacity: this.anim["alpha"],
       child: SizedBox(
-          height: this.anim["height"],
-          child: _yourView()
+          height: this.anim["size"],
+          width: this.anim["size"]
+          child: _yourView(),
       ),
     );
   }
