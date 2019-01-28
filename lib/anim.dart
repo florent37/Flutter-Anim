@@ -38,10 +38,11 @@ class Anim {
     _animatable = _animationResolver.resolve();
   }
 
-  void _resetToInitialValues(){
+  void _resetToInitialValues() {
     _currentValues.addAll(_initialValues);
   }
 
+/*
   static AnimTogether together({
     @required List<AnimAnimation> anims,
     Duration startDelay = Anim_DEFAULT_START_DELAY,
@@ -93,6 +94,7 @@ class Anim {
         curve: curve,
         startDelay: startDelay);
   }
+*/
 
   Future<void> start() async {
     _resetToInitialValues();
@@ -132,7 +134,10 @@ class AnimationResolver {
         childAnimatables.add(resolveCurrent(childs));
       }
       return ChainAnimatable(
-          animatables: childAnimatables, startDelay: animation.startDelay);
+        animSequentially: animation,
+        animatables: childAnimatables,
+        startDelay: animation.startDelay,
+      );
     } else if (current is AnimTogether) {
       final AnimTogether animation = current;
       final List<AnimAnimatable> childAnimatables = List<AnimAnimatable>();
@@ -140,16 +145,15 @@ class AnimationResolver {
         childAnimatables.add(resolveCurrent(childs));
       }
       return TogetherAnimatable(
-          animatables: childAnimatables, startDelay: animation.startDelay);
+        animTogether: animation,
+        animatables: childAnimatables,
+        startDelay: animation.startDelay,
+      );
     } else if (current is AnimValues) {
       final AnimValues animation = current;
       return SimpleAnimatable(
-        name: animation.name,
         animValueSetter: this.animValueSetter,
-        curve: animation.curve,
-        values: animation.values,
-        duration: animation.duration,
-        startDelay: animation.startDelay,
+        animValues: animation,
       );
     }
     return null;

@@ -12,6 +12,7 @@ this.anim1 = Anim(
           /* rebuild */
         });
       },
+      /* Define initial values, used when the animation has not been launched */
       initiaValues: {
         "text.alpha": 0,
         "text.translationY": -20,
@@ -73,6 +74,45 @@ this.anim1 = Anim(
         )
       ],
     );
+```
+
+# Bind with your widget
+
+```Dart
+Widget buildAvatarName() {
+    return Transform.translate(
+      offset: Offset(0, anim1["text.translationY"]),
+      child: Opacity(
+        opacity: this.anim["text.alpha"],
+        child: Text("Avatar",
+            style: const TextStyle(
+                color: Colors.blueGrey,
+                fontSize: 18,
+                fontWeight: FontWeight.w700),
+        ),
+      ),
+    );
+  }
+
+  Widget buildAvatar() {
+    return Transform.scale(
+      scale: this.anim["round.scale"],
+      child: Transform.rotate(
+        angle: this.anim["round.rotation"],
+        child: SizedBox(
+          height: this.anim["round.size"],
+          width: this.anim["round.size"],
+          child: CircleAvatar(),
+        ),
+      ),
+    );
+  }
+```
+
+# 3. Start !
+
+```Dart
+this.anim.start();
 ```
 
 ## Getting Started

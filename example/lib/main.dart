@@ -74,20 +74,22 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin {
                 ),
               ],
             ),
-            AnimTogether(anims: [
-              AnimValues(
-                name: "round.rotation",
-                curve: Curves.linear,
-                duration: const Duration(milliseconds: 600),
-                values: [0, degToRad(-10), degToRad(10), 0],
-              ),
-              AnimValues(
-                name: "round.scale",
-                curve: Curves.easeIn,
-                duration: const Duration(milliseconds: 400),
-                values: [1, 1.3, 1],
-              ),
-            ]),
+            AnimTogether(
+              anims: [
+                AnimValues(
+                  name: "round.rotation",
+                  curve: Curves.linear,
+                  duration: const Duration(milliseconds: 600),
+                  values: [0, degToRad(-10), degToRad(10), 0],
+                ),
+                AnimValues(
+                  name: "round.scale",
+                  curve: Curves.easeIn,
+                  duration: const Duration(milliseconds: 400),
+                  values: [1, 1.3, 1],
+                ),
+              ],
+            ),
           ],
         )
       ],
