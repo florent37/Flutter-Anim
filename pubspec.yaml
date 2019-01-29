@@ -1,6 +1,6 @@
 name: anim
 description: Fluent Flutter Animation library. Describe Sequences & Parallel animation's workflow, setup startDelay, duration and curve, then run !
-version: 0.0.3
+version: 1.0.0
 author: Florent Champigny <champigny.florent@gmail.com>
 homepage: https://github.com/florent37/Flutter-Anim
 
