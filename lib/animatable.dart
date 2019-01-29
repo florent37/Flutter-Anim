@@ -11,10 +11,14 @@ export 'dart:async';
 /// Can be reseted or disposed
 abstract class AnimAnimatable {
   final Duration startDelay;
+  final Duration duration;
 
   AnimAnimatable({
     @required this.startDelay,
+    @required this.duration,
   });
+
+  Duration get totalDuration => startDelay + duration;
 
   /// Starts the animation
   Future<AnimAnimatable> play();
@@ -37,7 +41,10 @@ class SimpleAnimatable extends AnimAnimatable {
   SimpleAnimatable({
     @required AnimValueSetter animValueSetter,
     @required this.animValues,
-  }) : super(startDelay: animValues.startDelay) {
+  }) : super(
+          startDelay: animValues.startDelay,
+          duration: animValues.duration,
+        ) {
     animationController = AnimationController(
         vsync: animValueSetter.anim.vsync, duration: this.animValues.duration);
 
@@ -97,6 +104,14 @@ class SimpleAnimatable extends AnimAnimatable {
   }
 }
 
+Duration _computeDuration(List<AnimAnimatable> animatables) {
+  Duration totalDuration = Duration();
+  for (var animatable in animatables) {
+    totalDuration += animatable.duration;
+  }
+  return totalDuration;
+}
+
 /// Computed animation of `AnimTogether`
 class TogetherAnimatable extends AnimAnimatable {
   final List<AnimAnimatable> animatables;
@@ -106,7 +121,7 @@ class TogetherAnimatable extends AnimAnimatable {
     this.animatables,
     Duration startDelay,
     this.animTogether,
-  }) : super(startDelay: startDelay);
+  }) : super(startDelay: startDelay, duration: _computeDuration(animatables));
 
   @override
   Future<AnimAnimatable> play() async {
@@ -152,7 +167,10 @@ class ChainAnimatable extends AnimAnimatable {
     this.animatables,
     this.animSequentially,
     Duration startDelay,
-  }) : super(startDelay: startDelay);
+  }) : super(
+          startDelay: startDelay,
+          duration: _computeDuration(animatables),
+        );
 
   @override
   Future<AnimAnimatable> play() async {

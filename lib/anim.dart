@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:core';
 export 'dart:async';
 
 import 'package:anim/animatable.dart';
 export 'package:anim/animatable.dart';
 
 import 'package:anim/animation.dart';
+import 'package:flutter/foundation.dart';
 export 'package:anim/animation.dart';
 
 import 'package:flutter/scheduler.dart';
