@@ -6,15 +6,29 @@ export 'package:flutter/animation.dart';
 import 'dart:async';
 export 'dart:async';
 
+/// `AnimAnimatable` real animations, capable of running
+/// Contains a startDelay
+/// Can be reseted or disposed
 abstract class AnimAnimatable {
   final Duration startDelay;
+
   AnimAnimatable({
     @required this.startDelay,
   });
-  Future<void> play();
+
+  /// Starts the animation
+  Future<AnimAnimatable> play();
+
+  /// Dispose the current animation
+  /// Will not be be able to start again
   void dispose();
+
+  /// Cancel the current animation
+  /// The animation will be reseted, you can now use `start()`
+  void reset();
 }
 
+/// Computed animation of `AnimValues`
 class SimpleAnimatable extends AnimAnimatable {
   AnimationController animationController;
   final AnimValues animValues;
@@ -59,7 +73,12 @@ class SimpleAnimatable extends AnimAnimatable {
   }
 
   @override
-  Future<void> play() async {
+  void reset() {
+    this.animationController.reset();
+  }
+
+  @override
+  Future<AnimAnimatable> play() async {
     if (animationController.isCompleted) {
       animationController.reset();
     }
@@ -73,18 +92,24 @@ class SimpleAnimatable extends AnimAnimatable {
     if (animValues.statusListener != null) {
       animValues.statusListener(AnimAnimationStatus.finished);
     }
+
+    return this;
   }
 }
 
+/// Computed animation of `AnimTogether`
 class TogetherAnimatable extends AnimAnimatable {
   final List<AnimAnimatable> animatables;
   final AnimTogether animTogether;
 
-  TogetherAnimatable({this.animatables, Duration startDelay, this.animTogether})
-      : super(startDelay: startDelay);
+  TogetherAnimatable({
+    this.animatables,
+    Duration startDelay,
+    this.animTogether,
+  }) : super(startDelay: startDelay);
 
   @override
-  Future<void> play() async {
+  Future<AnimAnimatable> play() async {
     if (startDelay != null) {
       await Future.delayed(startDelay);
     }
@@ -99,6 +124,8 @@ class TogetherAnimatable extends AnimAnimatable {
     if (animTogether.statusListener != null) {
       animTogether.statusListener(AnimAnimationStatus.finished);
     }
+
+    return this;
   }
 
   @override
@@ -107,18 +134,28 @@ class TogetherAnimatable extends AnimAnimatable {
       animatable.dispose();
     }
   }
+
+  @override
+  void reset() {
+    for (var animatable in animatables) {
+      animatable.reset();
+    }
+  }
 }
 
+/// Computed animation of `AnimSequentially`
 class ChainAnimatable extends AnimAnimatable {
   final List<AnimAnimatable> animatables;
   final AnimSequentially animSequentially;
 
-  ChainAnimatable(
-      {this.animatables, this.animSequentially, Duration startDelay})
-      : super(startDelay: startDelay);
+  ChainAnimatable({
+    this.animatables,
+    this.animSequentially,
+    Duration startDelay,
+  }) : super(startDelay: startDelay);
 
   @override
-  Future<void> play() async {
+  Future<AnimAnimatable> play() async {
     if (startDelay != null) {
       await Future.delayed(startDelay);
     }
@@ -131,12 +168,21 @@ class ChainAnimatable extends AnimAnimatable {
     if (animSequentially.statusListener != null) {
       animSequentially.statusListener(AnimAnimationStatus.finished);
     }
+
+    return this;
   }
 
   @override
   void dispose() {
     for (var animatable in animatables) {
       animatable.dispose();
+    }
+  }
+
+  @override
+  void reset() {
+    for (var animatable in animatables) {
+      animatable.reset();
     }
   }
 }
