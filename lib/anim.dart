@@ -16,6 +16,7 @@ export 'package:meta/meta.dart';
 export 'package:flutter/animation.dart';
 
 typedef AnimListener = void Function();
+typedef AnimRepeatListener = void Function(int current);
 
 class Anim {
   final TickerProvider vsync;
@@ -23,16 +24,24 @@ class Anim {
   final Map<String, double> _currentValues = Map<String, double>();
   AnimAnimatable _animatable;
   AnimListener listener;
+  AnimationStatusListener statusListener;
+  AnimRepeatListener repeatListener;
+  double repeatCount;
 
   double operator [](String key) {
     return _currentValues[key];
   }
+
+  bool running = false;
 
   Anim({
     @required this.vsync,
     @required this.listener,
     List<AnimAnimation> animations,
     Map<String, double> initiaValues,
+    this.repeatCount = 1,
+    this.statusListener,
+    this.repeatListener,
   }) {
     this._initialValues.addAll(initiaValues);
     _resetToInitialValues();
@@ -46,63 +55,31 @@ class Anim {
     _currentValues.addAll(_initialValues);
   }
 
-/*
-  static AnimTogether together({
-    @required List<AnimAnimation> anims,
-    Duration startDelay = Anim_DEFAULT_START_DELAY,
-  }) {
-    return AnimTogether(
-      anims: anims,
-      startDelay: startDelay,
-    );
+  Future<Anim> start() async {
+    if (!running) {
+      running = true;
+      if(statusListener != null){
+        statusListener(AnimAnimationStatus.started);
+      }
+      await _start(this.repeatCount);
+      if(statusListener != null){
+        statusListener(AnimAnimationStatus.finished);
+      }
+      running = false;
+    } else {
+      //TODO
+    }
+    return this;
   }
 
-  static AnimSequentially sequentially({
-    @required List<AnimAnimation> anims,
-    Duration startDelay = Anim_DEFAULT_START_DELAY,
-  }) {
-    return AnimSequentially(
-      anims: anims,
-      startDelay: startDelay,
-    );
-  }
-
-  static AnimValues values({
-    @required String name,
-    @required List<double> values,
-    Curve curve = Anim_DEFAULT_CURVE,
-    Duration duration = Anim_DEFAULT_DURATION,
-    Duration startDelay = Anim_DEFAULT_START_DELAY,
-  }) {
-    return AnimValues(
-      name: name,
-      values: values,
-      curve: curve,
-      duration: duration,
-      startDelay: startDelay,
-    );
-  }
-
-  static AnimAnimation tween({
-    @required String name,
-    @required double start,
-    @required double end,
-    Curve curve = Anim_DEFAULT_CURVE,
-    Duration duration = Anim_DEFAULT_DURATION,
-    Duration startDelay = Anim_DEFAULT_START_DELAY,
-  }) {
-    return values(
-        name: name,
-        values: [start, end],
-        duration: duration,
-        curve: curve,
-        startDelay: startDelay);
-  }
-*/
-
-  Future<void> start() async {
-    _resetToInitialValues();
-    return await _animatable.play();
+  Future<Anim> _start(double repeatLeft) async {
+    if (repeatLeft > 0) {
+      _resetToInitialValues();
+      await _animatable.play();
+      return _start(repeatLeft - 1);
+    } else {
+      return this;
+    }
   }
 
   void dispose() {

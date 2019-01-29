@@ -1,7 +1,5 @@
 import 'package:anim/anim.dart';
-import 'package:anim_example/math_rad.dart';
 import 'package:anim_example/my_circle_avatar.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class Example2 extends StatefulWidget {
@@ -26,6 +24,7 @@ class _Example2State extends State<Example2> with TickerProviderStateMixin {
   void createAnim() {
     this.anim = Anim(
         vsync: this,
+        repeatCount: 3,
         listener: () {
           setState(() {
             /* rebuild */
@@ -84,18 +83,13 @@ class _Example2State extends State<Example2> with TickerProviderStateMixin {
       fit: StackFit.expand,
       alignment: Alignment.center,
       children: <Widget>[
-        GestureDetector(
-          onTap: () {
-            this.anim.start();
-          },
-          child: Center(
-            child: Opacity(
-              opacity: this.anim["alpha"],
-              child: SizedBox(
-                height: this.anim["size"],
-                width: this.anim["size"],
-                child: _yourView(),
-              ),
+        Center(
+          child: Opacity(
+            opacity: this.anim["alpha"],
+            child: SizedBox(
+              height: this.anim["size"],
+              width: this.anim["size"],
+              child: _yourView(),
             ),
           ),
         ),
@@ -103,8 +97,7 @@ class _Example2State extends State<Example2> with TickerProviderStateMixin {
           bottom: 0,
           child: RaisedButton(
             onPressed: () {
-              //createAnim();
-              anim.start();
+              _startAnim();
             },
             child: Text(
               "Animate",
@@ -116,5 +109,10 @@ class _Example2State extends State<Example2> with TickerProviderStateMixin {
         )
       ],
     );
+  }
+
+  void _startAnim() async {
+    await anim.start();
+    print("finished");
   }
 }

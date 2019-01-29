@@ -17,8 +17,8 @@ AnimValues(
 
 ## Animation schedulers
 
-`AnimSequentially();` to play one after the other animations
-`AnimTogether();` to play in parallel animations
+`AnimSequentially()` to play one after the other animations
+`AnimTogether()` to play in parallel animations
 
 ```Dart
 AnimSequentially(anims: [

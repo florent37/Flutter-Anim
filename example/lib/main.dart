@@ -1,8 +1,6 @@
 
-import 'package:anim_example/example1.dart';
 import 'package:anim_example/example2.dart';
 import 'package:flutter/material.dart';
-import 'package:anim/anim.dart';
 
 void main() => runApp(MyApp());
 
